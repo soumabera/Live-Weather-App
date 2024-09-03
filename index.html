@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Live Weather App</h1>
+        <h2>By Souma</h2>
+    </header>
+    <main>
+        <div class="card">
+            <div class="search">
+                <input class="input" type="text" placeholder="Enter city name" spellcheck="false" aria-label="Enter city name">
+                <button aria-label="Search">
+                    <img src="search.png" alt="Search">
+                </button>
+            </div>
+            <div class="error">
+                <p>Invalid city name</p>
+            </div>
+            <div class="weather" style="display:none;">
+                <img src="rain.png" class="weather-icon" alt="Weather Icon">
+                <h1 class="temp">22°C</h1>
+                <h2 class="city">India</h2>
+                <div class="details">
+                    <div class="col">
+                        <img src="humidity.png" alt="Humidity Icon">
+                        <div>
+                            <p class="humidity">50%</p>
+                            <p>Humidity</p>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <img src="wind.png" alt="Wind Speed Icon">
+                        <div>
+                            <p class="wind">15 km/h</p>
+                            <p>Wind Speed</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        const apikey = "71d2f449cfdbc71cf8f204462b986432";
+        const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+
+        const searchBox = document.querySelector(".search input");
+        const searchBtn = document.querySelector(".search button");
+        const weatherIcon = document.querySelector(".weather-icon");
+
+        async function checkWeather(city) {
+            try {
+                const response = await fetch(apiUrl + city + `&appid=${apikey}`);
+                if (!response.ok) {
+                    throw new Error('City not found');
+                }
+                const data = await response.json();
+
+                document.querySelector(".city").textContent = data.name;
+                document.querySelector(".temp").textContent = Math.round(data.main.temp) + "°C";
+                document.querySelector(".humidity").textContent = data.main.humidity + "%";
+                document.querySelector(".wind").textContent = data.wind.speed + "km/h";
+
+                switch (data.weather[0].main) {
+                    case "Clouds":
+                        weatherIcon.src = "clouds.png";
+                        break;
+                    case "Clear":
+                        weatherIcon.src = "clear.png";
+                        break;
+                    case "Rain":
+                        weatherIcon.src = "rain.png";
+                        break;
+                    case "Drizzle":
+                        weatherIcon.src = "drizzle.png";
+                        break;
+                    case "Mist":
+                        weatherIcon.src = "mist.png";
+                        break;
+                    case "Snow":
+                        weatherIcon.src = "snow.png";
+                        break;
+                    default:
+                        weatherIcon.src = "default.png"; // Add a default image
+                        break;
+                }
+
+                document.querySelector(".weather").style.display = "block";
+                document.querySelector(".error").style.display = "none";
+            } catch (error) {
+                document.querySelector(".error").style.display = "block";
+                document.querySelector(".weather").style.display = "none";
+            }
+        }
+
+        searchBtn.addEventListener("click", () => {
+            checkWeather(searchBox.value);
+        });
+    </script>
+    <footer class="copyright">
+        <p>Copyright &#169; Souma. Made with <i class="bx bxs-heart"></i> by Souma Bera 
+            <a href="https://www.linkedin.com/in/souma-bera-273540237/" aria-label="LinkedIn">
+                <i class='bx bxl-linkedin'></i>
+            </a> 
+            <a href="mailto:soumabera345@gmail.com" aria-label="Email">
+                <i class='bx bxl-gmail'></i>
+            </a>  
+            <a href="https://github.com/soumabera" aria-label="GitHub">
+                <i class='bx bxl-github'></i>
+            </a>
+        </p>
+    </footer>
+</body>
+</html>
